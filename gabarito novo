@@ -33,6 +33,13 @@ df = df.dropna(subset=['Nascimento', 'Ano'])
 df['Idade_na_homenagem'] = df['Ano'] - df['Nascimento'].dt.year
 df['Década'] = (df['Ano'] // 10) * 10
 
+# Exibir informações gerais sobre o DataFrame
+print(df.info())
+
+# Exibir estatísticas descritivas básicas
+print("\nEstatísticas descritivas do DataFrame:")
+print(df.describe())
+
 # Pergunta 1 - Média de idade dos laureados por categoria
 print("\n-----------------------------------------------------")
 print("\n Pergunta 1: Média de idade dos laureados por categoria\n")
