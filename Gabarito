@@ -1,6 +1,6 @@
-
-
-
+''' Marcos da Silva Medeiros (2020788)
+    Enzo Gonçalves Sampaio (2112709)
+    Grupo 6 - INF1026 - 33A - Profa: Claudia Ferlin '''
 
 import pandas as pd
 import matplotlib.pyplot as plt
