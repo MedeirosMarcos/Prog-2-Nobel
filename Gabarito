@@ -1,0 +1,39 @@
+
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Carregar o dataset
+df = pd.read_csv('caminho_para_o_arquivo/nobel_prize.csv')
+df['birth_date'] = pd.to_datetime(df['birth_date'], errors='coerce')
+df['year'] = df['year'].astype(int)
+df['age_at_award'] = df['year'] - df['birth_date'].dt.year
+df['decade'] = (df['year'] // 10) * 10
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 1 - Qual é a média de idade dos laureados em cada categoria do prêmio?\n")
+age_by_category = df.groupby('category')['age_at_award'].mean()
+print(age_by_category)
+print("\n-----------------------------------------------------")
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 2 - Existe um padrão de idade dos laureados por país de nascimento?\n")
+age_by_country = df.groupby('birth_country')['age_at_award'].mean().sort_values(ascending=False).head(10)
+print(age_by_country)
+print("\n-----------------------------------------------------")
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 3 - Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?\n")
+awards_by_decade_category = df.groupby(['decade', 'category']).size().unstack().fillna(0)
+print(awards_by_decade_category)
+plt.figure(figsize=(14, 8))
+awards_by_decade_category.plot(kind='line', linewidth=2, marker='o', colormap='tab10')
+plt.title('Mudança nas Áreas de Pesquisa Premiadas ao Longo do Tempo')
+plt.xlabel('Década')
+plt.ylabel('Número de Prêmios')
+plt.legend(title='Categoria')
+plt.show()
+print("\n-----------------------------------------------------")
