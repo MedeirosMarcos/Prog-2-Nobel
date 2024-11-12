@@ -1,0 +1,7 @@
+import pandas as pd
+
+# Carregar o arquivo CSV
+df = pd.read_csv('caminho_para_o_arquivo/nobel_prize.csv')
+
+# Salvar como Excel
+df.to_excel('nobel_prize_data.xlsx', index=False)
