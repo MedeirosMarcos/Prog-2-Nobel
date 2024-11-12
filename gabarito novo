@@ -1,0 +1,286 @@
+''' Marcos da Silva Medeiros (2020788)
+    Enzo Gonçalves Sampaio (2112709)
+    Grupo 6 - INF1026 - 33A - Profa: Claudia Ferlin '''
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Carregar o arquivo Excel
+df = pd.read_excel('nobel-prize-laureates.xlsx')
+
+# Traduzir as colunas para português
+df = df.rename(columns={
+    'Born': 'Nascimento',
+    'Year': 'Ano',
+    'Category': 'Categoria',
+    'Born country': 'País de nascimento',
+    'Gender': 'Gênero',
+    'Died': 'Morte'
+})
+
+# Traduzir valores das colunas
+df['Categoria'] = df['Categoria'].replace({
+    'Physics': 'Física', 'Chemistry': 'Química', 'Medicine': 'Medicina',
+    'Literature': 'Literatura', 'Peace': 'Paz', 'Economic Sciences': 'Ciências Econômicas'
+})
+df['Gênero'] = df['Gênero'].replace({'Male': 'Masculino', 'Female': 'Feminino'})
+
+# Converter datas e calcular idade
+df['Nascimento'] = pd.to_datetime(df['Nascimento'], errors='coerce')
+df['Morte'] = pd.to_datetime(df['Morte'], errors='coerce')
+df['Ano'] = pd.to_numeric(df['Ano'], errors='coerce')
+df = df.dropna(subset=['Nascimento', 'Ano'])
+df['Idade_na_homenagem'] = df['Ano'] - df['Nascimento'].dt.year
+df['Década'] = (df['Ano'] // 10) * 10
+
+# Pergunta 1 - Média de idade dos laureados por categoria
+print("\n-----------------------------------------------------")
+print("\n Pergunta 1: Média de idade dos laureados por categoria\n")
+idade_por_categoria = df.groupby('Categoria')['Idade_na_homenagem'].mean()
+idade_por_categoria.plot(kind='bar', color='skyblue', edgecolor='black')
+plt.title('Média de Idade dos Laureados por Categoria')
+plt.xlabel('Categoria')
+plt.ylabel('Média de Idade')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+print(idade_por_categoria)
+print("\n-----------------------------------------------------")
+
+# Pergunta 2 - Padrão de idade dos laureados por país
+print("\n-----------------------------------------------------")
+print("\n Pergunta 2: Quais são os 5 paises com a maior idade média na homenagem e os 5 paises com a menor?\n")
+
+# Calcular a idade média dos laureados por país
+idade_por_pais = df.groupby('País de nascimento')['Idade_na_homenagem'].mean()
+
+# Tratar valores ausentes (caso existam)
+# Se houver algum valor nulo na idade, substituímos pela média global de idade
+idade_por_pais.fillna(idade_por_pais.mean(), inplace=True)
+
+# Top 5 países com maior idade média
+top_5_maior_idade = idade_por_pais.sort_values(ascending=False).head(5)
+
+# Top 5 países com menor idade média
+top_5_menor_idade = idade_por_pais.sort_values(ascending=True).head(5)
+
+# Exibir as idades médias
+print("Top 5 Países com Maior Idade Média na Homenagem:")
+print(top_5_maior_idade)
+print("\nTop 5 Países com Menor Idade Média na Homenagem:")
+print(top_5_menor_idade)
+
+# Gráficos de barras para visualização
+# Gráfico para Top 5 com maior idade
+plt.figure(figsize=(10, 6))
+top_5_maior_idade.plot(kind='bar', color='lightgreen', edgecolor='black')
+plt.title('Top 5 Países com Maior Idade Média dos Laureados')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Idade Média na Homenagem')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+# Gráfico para Top 5 com menor idade
+plt.figure(figsize=(10, 6))
+top_5_menor_idade.plot(kind='bar', color='lightcoral', edgecolor='black')
+plt.title('Top 5 Países com Menor Idade Média dos Laureados')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Idade Média na Homenagem')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+print("\n-----------------------------------------------------")
+
+
+# Pergunta 3 - Mudança nas áreas premiadas ao longo do tempo
+print("\n-----------------------------------------------------")
+print("\n Pergunta 3: Mudança nas áreas de pesquisa ao longo do tempo\n")
+premios_por_decada_categoria = df.groupby(['Década', 'Categoria']).size().unstack().fillna(0)
+premios_por_decada_categoria.plot(kind='line', linewidth=2, marker='o', colormap='tab10')
+plt.title('Mudança nas Áreas de Pesquisa Premiadas ao Longo do Tempo')
+plt.xlabel('Década')
+plt.ylabel('Número de Prêmios')
+plt.legend(title='Categoria')
+plt.show()
+print(premios_por_decada_categoria)
+print("\n-----------------------------------------------------")
+
+# Pergunta 4 - Top 10 Países com mais laureados em Física e Química
+print("\n-----------------------------------------------------")
+print("\n Pergunta 4: Top 10 Países com mais laureados em Física e Química\n")
+
+# Contar o número de laureados por país e por categoria (Física e Química)
+df_fisica = df[df['Categoria'] == 'Física'].groupby('País de nascimento').size()
+df_quimica = df[df['Categoria'] == 'Química'].groupby('País de nascimento').size()
+
+# Combinar os dois dataframes de Física e Química
+df_fisica_quimica = pd.concat([df_fisica, df_quimica], axis=1).fillna(0)
+df_fisica_quimica.columns = ['Física', 'Química']
+
+# Somar os laureados de Física e Química para cada país
+df_fisica_quimica['Total'] = df_fisica_quimica['Física'] + df_fisica_quimica['Química']
+
+# Ordenar os países pelo total de laureados (de forma decrescente) e pegar os top 10
+top_10_paises = df_fisica_quimica.sort_values('Total', ascending=False).head(10)
+
+# Exibir a tabela com os resultados
+print(top_10_paises[['Física', 'Química', 'Total']])
+
+# Gráfico de barras empilhadas para visualização
+top_10_paises[['Física', 'Química']].plot(kind='bar', stacked=True, color=['skyblue', 'salmon'], edgecolor='black', figsize=(12, 6))
+plt.title('Top 10 Países com Mais Laureados em Física e Química')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Número de Laureados')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.legend(title='Categoria')
+plt.show()
+
+print("\n-----------------------------------------------------")
+
+
+# Pergunta 5 - Proporção de laureados homens e mulheres na história da premiação
+print("\n-----------------------------------------------------")
+print("\n Pergunta 5: Proporção de laureados homens e mulheres na história da premiação\n")
+
+# Contagem do número total de laureados por gênero
+genero_total = df['Gênero'].value_counts()
+
+# Calcular a proporção de homens e mulheres
+proporcao_genero = genero_total / genero_total.sum() * 100
+
+# Exibir as proporções de homens e mulheres
+print("Proporção de Homens e Mulheres na História da Premiação:")
+print(proporcao_genero)
+
+# Gráfico de pizza para visualização
+plt.figure(figsize=(7, 7))
+plt.pie(proporcao_genero, labels=proporcao_genero.index, autopct='%1.1f%%', colors=['skyblue', 'lightcoral'], startangle=90, wedgeprops={'edgecolor': 'black'})
+plt.title('Proporção de Laureados Homens e Mulheres na História do Prêmio Nobel')
+plt.show()
+
+print("\n-----------------------------------------------------")
+
+
+# Pergunta 6 - Média de idade dos laureados dos países que mais/menos ganharam prêmios em Física e Química com menos de 45 anos
+print("\n-----------------------------------------------------")
+print("\n Pergunta 6: Idade dos laureados dos países com mais e menos prêmios em Física e Química (< 45 anos)\n")
+
+# Filtrando os laureados de Física e Química com menos de 45 anos
+df_fisica_quimica_jovens = df[(df['Categoria'].isin(['Física', 'Química'])) & (df['Idade_na_homenagem'] < 45)]
+
+# Contar o número de prêmios por país
+top_paises = df_fisica_quimica_jovens['País de nascimento'].value_counts().head(3).index
+bottom_paises = df_fisica_quimica_jovens['País de nascimento'].value_counts().tail(3).index
+
+# Calcular a média de idade dos laureados por país
+media_idade_top = df_fisica_quimica_jovens[df_fisica_quimica_jovens['País de nascimento'].isin(top_paises)]\
+    .groupby('País de nascimento')['Idade_na_homenagem'].mean()
+
+media_idade_bottom = df_fisica_quimica_jovens[df_fisica_quimica_jovens['País de nascimento'].isin(bottom_paises)]\
+    .groupby('País de nascimento')['Idade_na_homenagem'].mean()
+
+# Exibindo as médias de idade para os países com mais e menos prêmios
+print("Média de Idade para os 3 Países com Mais Prêmios em Física e Química (< 45 anos):")
+print(media_idade_top)
+
+print("\nMédia de Idade para os 3 Países com Menos Prêmios em Física e Química (< 45 anos):")
+print(media_idade_bottom)
+
+# Criando o subplot para exibir os dois gráficos lado a lado
+plt.subplot(1, 2, 1)  # 1 linha, 2 colunas, 1º gráfico
+plt.bar(media_idade_top.index, media_idade_top.values, color='deepskyblue', edgecolor='black')
+plt.title('Top 3 Países com Mais Prêmios', fontsize=14)
+plt.xlabel('País', fontsize=12)
+plt.ylabel('Média de Idade', fontsize=12)
+plt.xticks(rotation=45, ha='right')
+plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+plt.subplot(1, 2, 2)  # 1 linha, 2 colunas, 2º gráfico
+plt.bar(media_idade_bottom.index, media_idade_bottom.values, color='lightcoral', edgecolor='black')
+plt.title('Top 3 Países com Menos Prêmios', fontsize=14)
+plt.xlabel('País', fontsize=12)
+plt.ylabel('Média de Idade', fontsize=12)
+plt.xticks(rotation=45, ha='right')
+plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+# Ajustar layout
+plt.tight_layout()
+
+# Exibindo os gráficos
+plt.show()
+
+print("\n-----------------------------------------------------")
+
+# Pergunta 7 - Expectativa de vida média dos laureados por década de prêmio
+print("\n-----------------------------------------------------")
+print("\n Pergunta 7: Expectativa de vida média dos laureados por década de prêmio\n")
+def preencher_data_morte(row):
+    if pd.isnull(row['Morte']):
+        mesma_decada_nascimento = df[(df['Nascimento'].dt.year // 10) * 10 == (row['Nascimento'].year // 10) * 10]
+        idade_morte_media = (mesma_decada_nascimento['Morte'].dropna() - mesma_decada_nascimento['Nascimento']).dt.days.mean() / 365
+        if pd.notnull(idade_morte_media):
+            return row['Nascimento'] + pd.DateOffset(years=int(idade_morte_media))
+    return row['Morte']
+
+df['Morte'] = df.apply(preencher_data_morte, axis=1)
+df['Expectativa_de_vida'] = (df['Morte'] - df['Nascimento']).dt.days / 365
+expectativa_por_decada = df.groupby('Década')['Expectativa_de_vida'].mean()
+expectativa_por_decada.plot(kind='bar', color='lightgreen', edgecolor='black')
+plt.title('Expectativa de Vida dos Laureados por Década')
+plt.xlabel('Década')
+plt.ylabel('Expectativa de Vida (anos)')
+plt.show()
+print(expectativa_por_decada)
+print("\n-----------------------------------------------------")
+
+# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
+print("\n-----------------------------------------------------")
+print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
+genero_categoria = pd.crosstab(df['Categoria'], df['Gênero'])
+genero_categoria.plot(kind='bar', stacked=True, color=['pink', 'dodgerblue', 'gray'])
+plt.title('Distribuição dos Prêmios Nobel por Gênero e Categoria')
+plt.xlabel('Categoria')
+plt.ylabel('Número de Laureados')
+plt.legend(title='Gênero')
+plt.show()
+print(genero_categoria)
+print("\n-----------------------------------------------------")
+
+# Pergunta 9 - Análise de Tendências nas Categorias de Prêmios ao Longo do Tempo
+print("\n-----------------------------------------------------")
+print("\n Pergunta 9: Tendência das Categorias de Prêmios ao Longo do Tempo\n")
+
+# Contagem do número de prêmios por década e categoria
+tendencia_categoria_decada = df.groupby(['Década', 'Categoria']).size().unstack().fillna(0)
+
+# Aplicando uma média móvel para suavizar tendências
+tendencia_categoria_decada_suavizada = tendencia_categoria_decada.rolling(window=3, axis=0).mean()
+
+# Plotando as tendências
+tendencia_categoria_decada_suavizada.plot(kind='line', marker='o', colormap='tab20', linewidth=3)
+plt.title('Tendência nas Categorias de Prêmios Nobel ao Longo do Tempo (Média Móvel de 3 Décadas)')
+plt.xlabel('Década')
+plt.ylabel('Número de Prêmios')
+plt.legend(title='Categoria', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+# Exibindo os dados processados
+print(tendencia_categoria_decada_suavizada)
+print("\n-----------------------------------------------------")
+
+print("\n-----------------------------------------------------")
+print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
+
+# Filtrando para as últimas décadas (por exemplo, 1980-2020)
+ultimas_decadas = df[df['Década'] >= 1980]
+categorias_ultimas_decadas = ultimas_decadas.groupby('Categoria').size().sort_values(ascending=False)
+
+# Exibindo as categorias mais premiadas nas últimas décadas
+print("\nPrincipais Categorias Premiadas nas Últimas Décadas:")
+print(categorias_ultimas_decadas)
+print("\n-----------------------------------------------------")
+
