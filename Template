@@ -1,0 +1,15 @@
+''' Marcos da Silva Medeiros (2020788)
+    Enzo Gonçalves Sampaio (2112709)
+    Grupo 6 - INF1026 - 33A - Profa: Claudia Ferlin '''
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 1 - Qual é a média de idade dos laureados em cada categoria do prêmio?")
+print("\n-----------------------------------------------------")
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 2 - Existe um padrão de idade dos laureados por país de nascimento?")
+print("\n-----------------------------------------------------")
+
+print("\n-----------------------------------------------------")
+print("\n Pergunta 3 - Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?")
+print("\n-----------------------------------------------------")
