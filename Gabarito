@@ -4,36 +4,221 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# Carregar o dataset
-df = pd.read_csv('caminho_para_o_arquivo/nobel_prize.csv')
-df['birth_date'] = pd.to_datetime(df['birth_date'], errors='coerce')
-df['year'] = df['year'].astype(int)
-df['age_at_award'] = df['year'] - df['birth_date'].dt.year
-df['decade'] = (df['year'] // 10) * 10
+# Carregar o arquivo Excel
+df = pd.read_excel('nobel-prize-laureates.xlsx')
 
+# Exibir informações gerais sobre o DataFrame
+print(df.info())
+
+# Exibir estatísticas descritivas básicas
+print("\nEstatísticas descritivas do DataFrame:")
+print(df.describe())
+
+# Traduzir os nomes das colunas usando rename()
+df = df.rename(columns={
+    'Born': 'Nascimento',
+    'Year': 'Ano',
+    'Category': 'Categoria',
+    'Born country': 'País de nascimento',
+    'Gender': 'Gênero',
+    'Died': 'Morte'
+})
+
+# Traduzir os valores dos índices (como 'Categoria' e 'Gênero') usando replace()
+df['Categoria'] = df['Categoria'].replace({
+    'Physics': 'Física',
+    'Chemistry': 'Química',
+    'Medicine': 'Medicina',
+    'Literature': 'Literatura',
+    'Peace': 'Paz',
+    'Economic Sciences': 'Ciências Econômicas'
+})
+
+df['Gênero'] = df['Gênero'].replace({
+    'Male': 'Masculino',
+    'Female': 'Feminino'
+})
+
+# Tratar a coluna 'Nascimento' e calcular a idade dos laureados ao receber o prêmio
+df['Nascimento'] = pd.to_datetime(df['Nascimento'], errors='coerce')
+df = df.dropna(subset=['Nascimento'])  # Remover linhas com valores nulos na coluna 'Nascimento'
+df['Morte'] = pd.to_datetime(df['Morte'], errors='coerce')
+# Garantir que a coluna 'Ano' seja convertida para inteiro sem erros
+df['Ano'] = pd.to_numeric(df['Ano'], errors='coerce')
+df = df.dropna(subset=['Ano'])  # Remover linhas com valores nulos na coluna 'Ano'
+
+# Calcular a idade dos laureados no momento do prêmio
+df['Idade_na_homenagem'] = df['Ano'] - df['Nascimento'].dt.year
+
+# Criar uma nova coluna 'Década' para agrupar os laureados por décadas
+df['Década'] = (df['Ano'] // 10) * 10
+
+# Pergunta 1 - Qual é a média de idade dos laureados em cada categoria do prêmio?
 print("\n-----------------------------------------------------")
 print("\n Pergunta 1 - Qual é a média de idade dos laureados em cada categoria do prêmio?\n")
-age_by_category = df.groupby('category')['age_at_award'].mean()
-print(age_by_category)
+idade_por_categoria = df.groupby('Categoria')['Idade_na_homenagem'].mean()
+
+# Gráfico para a Pergunta 1: Média de idade dos laureados por categoria
+plt.figure(figsize=(10, 6))
+idade_por_categoria.plot(kind='bar', color='skyblue', edgecolor='black')
+plt.title('Média de Idade dos Laureados por Categoria')
+plt.xlabel('Categoria')
+plt.ylabel('Média de Idade')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+print(idade_por_categoria)
 print("\n-----------------------------------------------------")
 
+# Pergunta 2 - Existe um padrão de idade dos laureados por país de nascimento?
 print("\n-----------------------------------------------------")
 print("\n Pergunta 2 - Existe um padrão de idade dos laureados por país de nascimento?\n")
-age_by_country = df.groupby('birth_country')['age_at_award'].mean().sort_values(ascending=False).head(10)
-print(age_by_country)
+idade_por_pais = df.groupby('País de nascimento')['Idade_na_homenagem'].mean().sort_values(ascending=False).head(10)
+print(idade_por_pais)
 print("\n-----------------------------------------------------")
 
+# Pergunta 3 - Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?
 print("\n-----------------------------------------------------")
 print("\n Pergunta 3 - Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?\n")
-awards_by_decade_category = df.groupby(['decade', 'category']).size().unstack().fillna(0)
-print(awards_by_decade_category)
+premios_por_decada_categoria = df.groupby(['Década', 'Categoria']).size().unstack().fillna(0)
+print(premios_por_decada_categoria)
 plt.figure(figsize=(14, 8))
-awards_by_decade_category.plot(kind='line', linewidth=2, marker='o', colormap='tab10')
+premios_por_decada_categoria.plot(kind='line', linewidth=2, marker='o', colormap='tab10')
 plt.title('Mudança nas Áreas de Pesquisa Premiadas ao Longo do Tempo')
 plt.xlabel('Década')
 plt.ylabel('Número de Prêmios')
 plt.legend(title='Categoria')
 plt.show()
 print("\n-----------------------------------------------------")
+
+# Pergunta 4 - Quais países produziram mais laureados em determinadas categorias?
+print("\n-----------------------------------------------------")
+print("\n Pergunta 4 - Quais países produziram mais laureados em determinadas categorias?\n")
+# Filtrar apenas as categorias de Física e Química
+df_fisica = df[df['Categoria'] == 'Física'].groupby('País de nascimento').size()
+df_quimica = df[df['Categoria'] == 'Química'].groupby('País de nascimento').size()
+
+# Combinar os dados de Física e Química em um DataFrame com o concat
+df_fisica_quimica = pd.concat([df_fisica, df_quimica], axis=1)
+df_fisica_quimica.columns = ['Física', 'Química']
+df_fisica_quimica = df_fisica_quimica.fillna(0)
+
+# Exibir o resultado
+print("\n-----------------------------------------------------")
+print("Número de laureados em Física e Química por País:")
+print(df_fisica_quimica)
+print("-----------------------------------------------------")
+
+# Gráfico para visualizar os dados de Física e Química por país
+df_fisica_quimica.plot(kind='bar', stacked=True, figsize=(14, 8), color=['skyblue', 'salmon'], edgecolor='black')
+plt.title('Número de Laureados em Física e Química por País')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Número de Laureados')
+plt.legend(title='Categoria')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+print("\n-----------------------------------------------------")
+
+# Pergunta 5 - A proporção de laureados homens e mulheres tem mudado ao longo do tempo?
+print("\n-----------------------------------------------------")
+print("\n Pergunta 5 - A proporção de laureados homens e mulheres tem mudado ao longo do tempo?\n")
+genero_por_decada = df.groupby(['Década', 'Gênero']).size().unstack().fillna(0)
+genero_por_decada_percentual = genero_por_decada.div(genero_por_decada.sum(axis=1), axis=0) * 100
+
+# Gráfico para a Pergunta 5: Proporção de Homens e Mulheres ao Longo do Tempo
+plt.figure(figsize=(14, 8))
+genero_por_decada_percentual.plot(kind='line', marker='o', linewidth=3)
+plt.title('Proporção de Laureados Homens e Mulheres ao Longo do Tempo')
+plt.xlabel('Década')
+plt.ylabel('Proporção (%)')
+plt.legend(title='Gênero', labels=['Mulheres', 'Homens'])
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+print(genero_por_decada_percentual)
+print("\n-----------------------------------------------------")
+
+#Pergunta 6 - A média de idade dos laureados dos 3 países que mais ganharam o prêmio nobel de Fisica e Quimica com  menos de 45 anos e os 3 que menos ganharam.
+print("\n Pergunta 6 -  A média de idade dos laureados dos 3 países que mais ganharam o prêmio nobel de Fisica e Quimica com menos de 45 anos e os 3 que menos ganharam.\n")
+
+
+# Filtrar laureados nas categorias de Física e Química com menos de 45 anos
+df_fisica_quimica = df[
+    (df['Categoria'].isin(['Física', 'Química'])) & 
+    (df['Idade_na_homenagem'] < 45)
+]
+
+# Encontrar os três países que mais ganharam prêmios em Física e Química com idade < 45 anos
+top_paises = df_fisica_quimica['País de nascimento'].value_counts().head(3).index
+df_top = df_fisica_quimica[df_fisica_quimica['País de nascimento'].isin(top_paises)]
+media_idade_top = df_top.groupby('País de nascimento')['Idade_na_homenagem'].mean()
+
+# Encontrar os três países que menos ganharam prêmios (com pelo menos um) em Física e Química com idade < 45 anos
+bottom_paises = df_fisica_quimica['País de nascimento'].value_counts().tail(3).index
+df_bottom = df_fisica_quimica[df_fisica_quimica['País de nascimento'].isin(bottom_paises)]
+media_idade_bottom = df_bottom.groupby('País de nascimento')['Idade_na_homenagem'].mean()
+
+# Gráfico para os três países que mais ganharam
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+media_idade_top.plot(kind='bar', color='skyblue', edgecolor='black')
+plt.title('Média de Idade dos Laureados (Os 3 países com mais prêmios)')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Média de Idade')
+plt.xticks(rotation=45)
+
+# Gráfico para os três países que menos ganharam
+plt.subplot(1, 2, 2)
+media_idade_bottom.plot(kind='bar', color='salmon', edgecolor='black')
+plt.title('Média de Idade dos Laureados (Os 3 países com menos prêmios)')
+plt.xlabel('País de Nascimento')
+plt.ylabel('Média de Idade')
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+print("\n-----------------------------------------------------")
+print("Média de idade dos laureados em Física e Química (Os 3 países com mais prêmios):")
+print(media_idade_top)
+print("\nMédia de idade dos laureados em Física e Química (Os 3 países com menos prêmios):")
+print(media_idade_bottom)
+print("-----------------------------------------------------")
+
+# Substituir os valores ausentes de 'Morte' pela média de 'Morte' dos laureados da mesma década
+def preencher_data_morte(row):
+    if pd.isnull(row['Morte']):
+        # Calcular a média da data de morte dos laureados da mesma década
+        mortes_na_mesma_decada = df[df['Década'] == row['Década']]['Morte']
+        media_data_morte = mortes_na_mesma_decada.mean()
+        return media_data_morte
+    else:
+        return row['Morte']
+
+df['Morte'] = df.apply(preencher_data_morte, axis=1)
+
+# Calcular a expectativa de vida (diferença entre 'Morte' e 'Nascimento')
+df['Expectativa_de_vida'] = (df['Morte'] - df['Nascimento']).dt.days / 365
+
+# Agrupar por década e calcular a média da expectativa de vida
+expectativa_por_decada = df.groupby('Década')['Expectativa_de_vida'].mean()
+
+# Exibir a média de expectativa de vida por década
+print("\nMédia de Expectativa de Vida dos Laureados por Década:")
+print(expectativa_por_decada)
+
+# Gráfico para a Pergunta 7: Expectativa de Vida dos Laureados por Década
+plt.figure(figsize=(10, 6))
+expectativa_por_decada.plot(kind='bar', color='lightgreen', edgecolor='black')
+plt.title('Expectativa de Vida dos Laureados por Década')
+plt.xlabel('Década')
+plt.ylabel('Expectativa de Vida (anos)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
