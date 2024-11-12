@@ -1,0 +1,37 @@
+1. Objetivo do Trabalho
+O principal objetivo deste trabalho é analisar o perfil dos laureados do Prêmio Nobel ao longo dos anos. A análise visa identificar padrões demográficos e de áreas de pesquisa, como idade, país de origem e categoria de prêmio, que possam fornecer uma compreensão mais aprofundada sobre os laureados e as tendências nas premiações ao longo do tempo.
+
+2. Fonte dos Dados
+Os dados utilizados para esta análise foram obtidos do Kaggle no seguinte link: https://www.kaggle.com/datasets/joebeachcapital/nobel-prize. A base foi baixada em sua versão mais recente, garantindo que os dados representem todos os prêmios até a data atual.
+
+3. Descrição da Base de Dados
+A base de dados é composta pelas seguintes colunas:
+
+ID: Identificação única de cada laureado.
+Nome: Nome do laureado.
+Data de nascimento: Data de nascimento do laureado.
+País de nascimento: País onde o laureado nasceu.
+Categoria: Categoria do prêmio (como Física, Química, etc.).
+Ano: Ano em que o prêmio foi recebido.
+Motivo: Razão pela qual o prêmio foi concedido.
+Gênero: Gênero do laureado.
+4. Perguntas Respondidas
+
+Pergunta 1: Qual é a média de idade dos laureados em cada categoria do prêmio?
+Requisito atendido: Sumarização (8.b).
+Objetivo: Avaliar a faixa etária predominante por categoria, fornecendo uma visão sobre os perfis etários nas diferentes áreas de premiação.
+
+Pergunta 2: Existe um padrão de idade dos laureados por país de nascimento?
+Requisito atendido: Agrupamento e sumarização por grupo (8.c).
+Objetivo: Verificar padrões geográficos de idade e se laureados de alguns países tendem a ganhar o prêmio em idades diferentes.
+
+Pergunta 3: Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?
+Requisito atendido: Cruzamento estruturado com crosstab (9.b).
+Objetivo: Observar tendências nas áreas de pesquisa para entender como o foco das premiações evoluiu ao longo das décadas.
+
+5. Conclusão
+Com base nas análises, observou-se que:
+
+A idade média dos laureados varia entre as categorias, indicando diferenças nos perfis etários conforme a área de premiação.
+Há padrões regionais na idade dos laureados, com laureados de alguns países tendendo a ganhar o prêmio mais tarde.
+As áreas de pesquisa premiadas variaram ao longo do tempo, sugerindo que diferentes períodos deram destaque a áreas específicas, como Física e Química nas primeiras décadas e Economia nas décadas recentes.
