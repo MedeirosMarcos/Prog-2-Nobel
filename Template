@@ -2,14 +2,103 @@
     Enzo Gonçalves Sampaio (2112709)
     Grupo 6 - INF1026 - 33A - Profa: Claudia Ferlin '''
 
-print("\n-----------------------------------------------------")
-print("\n Pergunta 1 - Qual é a média de idade dos laureados em cada categoria do prêmio?")
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Carregar o arquivo Excel
+df = pd.read_excel('nobel-prize-laureates.xlsx')
+
+# Traduzir as colunas para português
+df = df.rename(columns={
+    'Born': 'Nascimento',
+    'Year': 'Ano',
+    'Category': 'Categoria',
+    'Born country': 'País de nascimento',
+    'Gender': 'Gênero',
+    'Died': 'Morte'
+})
+
+# Traduzir valores das colunas
+df['Categoria'] = df['Categoria'].replace({
+    'Physics': 'Física', 'Chemistry': 'Química', 'Medicine': 'Medicina',
+    'Literature': 'Literatura', 'Peace': 'Paz', 'Economic Sciences': 'Ciências Econômicas'
+})
+df['Gênero'] = df['Gênero'].replace({'Male': 'Masculino', 'Female': 'Feminino'})
+
+# Converter datas e calcular idade
+df['Nascimento'] = pd.to_datetime(df['Nascimento'], errors='coerce')
+df['Morte'] = pd.to_datetime(df['Morte'], errors='coerce')
+df['Ano'] = pd.to_numeric(df['Ano'], errors='coerce')
+df = df.dropna(subset=['Nascimento', 'Ano'])
+df['Idade_na_homenagem'] = df['Ano'] - df['Nascimento'].dt.year
+df['Década'] = (df['Ano'] // 10) * 10
+
+# Exibir informações gerais sobre o DataFrame
+print(df.info())
+
+# Exibir estatísticas descritivas básicas
+print("\nEstatísticas descritivas do DataFrame:")
+print(df.describe())
+
+# Pergunta 1 - Média de idade dos laureados por categoria
 print("\n-----------------------------------------------------")
 
 print("\n-----------------------------------------------------")
-print("\n Pergunta 2 - Existe um padrão de idade dos laureados por país de nascimento?")
+
+# Pergunta 2 - Padrão de idade dos laureados por país
 print("\n-----------------------------------------------------")
+print("\n Pergunta 2: Quais são os 5 paises com a maior idade média na homenagem e os 5 paises com a menor?\n")
 
 print("\n-----------------------------------------------------")
-print("\n Pergunta 3 - Existe uma mudança nas áreas de pesquisa premiadas ao longo do tempo?")
+
+# Pergunta 3 - Relação entre idade e ano do prêmio
+print("\n-----------------------------------------------------")
+print("\n Pergunta 3: Relação entre a idade dos laureados e o ano do prêmio\n")
+
+# Pergunta 4 - Top 10 Países com mais laureados em Física e Química
+print("\n-----------------------------------------------------")
+print("\n Pergunta 4: Top 10 Países com mais laureados em Física e Química\n")
+
+print("\n-----------------------------------------------------")
+
+
+# Pergunta 5 - Proporção de laureados homens e mulheres na história da premiação
+print("\n-----------------------------------------------------")
+print("\n Pergunta 5: Proporção de laureados homens e mulheres na história da premiação\n")
+
+print("\n-----------------------------------------------------")
+
+# Pergunta 6 - Média de idade dos laureados dos países que mais/menos ganharam prêmios em Física e Química com menos de 45 anos
+print("\n-----------------------------------------------------")
+print("\n Pergunta 6: Idade dos laureados dos países com mais e menos prêmios em Física e Química (< 45 anos)\n")
+
+print("\n-----------------------------------------------------")
+
+# Pergunta 7 - Faixas etárias dos laureados por categoria
+print("\n-----------------------------------------------------")
+print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
+    
+print("\n-----------------------------------------------------")
+
+# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
+print("\n-----------------------------------------------------")
+print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
+
+# Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões
+print("\n-----------------------------------------------------")
+print("\n Pergunta 9: Qual a proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões?\n")
+
+# Lista de países europeus (pode ser ajustada conforme necessário)
+europa = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 
+          'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 
+          'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 
+          'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 
+          'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 
+          'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City']
+
+print("\n-----------------------------------------------------")
+# Pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?
+print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
+
+
 print("\n-----------------------------------------------------")
