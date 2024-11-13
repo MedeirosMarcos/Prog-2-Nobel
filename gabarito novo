@@ -226,10 +226,6 @@ print("\n-----------------------------------------------------")
 # Pergunta 7 - Faixas etárias dos laureados por categoria
 print("\n-----------------------------------------------------")
 print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
-
-# Pergunta 7 - Faixas etárias dos laureados por categoria
-print("\n-----------------------------------------------------")
-print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
     
 # Criar categorias de faixa etária com pd.cut
 df['Faixa_Etaria'] = pd.cut(df['Idade_na_homenagem'], bins=3, labels=['Jovem', 'Adulto', 'Idoso'])
@@ -249,6 +245,33 @@ plt.legend(title='Faixa Etária')
 plt.tight_layout()
 plt.show()
     
+print("\n-----------------------------------------------------")
+
+# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
+print("\n-----------------------------------------------------")
+print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
+
+# Criação da tabela cruzada para contagem por Categoria e Gênero
+genero_categoria = pd.crosstab(df['Categoria'], df['Gênero'])
+
+# Plotagem do gráfico aprimorado
+plt.figure(figsize=(10, 7))  # Ajuste do tamanho da figura
+ax = genero_categoria.plot(kind='bar', stacked=True, color=['#FFC0CB', '#1E90FF', '#A9A9A9'], edgecolor='black', width=0.75, linewidth=0.7)
+
+# Personalização do título e dos eixos
+plt.title('Distribuição dos Prêmios Nobel por Gênero e Categoria', fontsize=16, weight='bold')
+plt.xlabel('Categoria', fontsize=13)
+plt.ylabel('Número de Laureados', fontsize=13)
+plt.xticks(rotation=45, ha='right', fontsize=11)  # Rotação dos rótulos do eixo x
+plt.yticks(fontsize=11)
+plt.legend(title='Gênero', fontsize=11, title_fontsize=12, loc='upper right')  # Personalização da legenda
+
+# Ajuste dos layouts para não cortar os textos
+plt.tight_layout()
+plt.show()
+
+# Exibir a tabela de contagem
+print(genero_categoria)
 print("\n-----------------------------------------------------")
 
 # Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões
@@ -283,38 +306,6 @@ plt.figure(figsize=(7, 7))
 plt.pie(contagem_regiao, labels=contagem_regiao.index, autopct='%1.1f%%', colors=['lightblue', 'salmon'], startangle=90, wedgeprops={'edgecolor': 'black'})
 plt.title('Proporção de Laureados Nascidos na Europa e em Outras Regiões')
 plt.show()
-
-print("\n-----------------------------------------------------")
-
-
-# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
-print("\n-----------------------------------------------------")
-print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
-
-# Criação da tabela cruzada para contagem por Categoria e Gênero
-genero_categoria = pd.crosstab(df['Categoria'], df['Gênero'])
-
-# Plotagem do gráfico aprimorado
-plt.figure(figsize=(10, 7))  # Ajuste do tamanho da figura
-ax = genero_categoria.plot(kind='bar', stacked=True, color=['#FFC0CB', '#1E90FF', '#A9A9A9'], edgecolor='black', width=0.75, linewidth=0.7)
-
-# Personalização do título e dos eixos
-plt.title('Distribuição dos Prêmios Nobel por Gênero e Categoria', fontsize=16, weight='bold')
-plt.xlabel('Categoria', fontsize=13)
-plt.ylabel('Número de Laureados', fontsize=13)
-plt.xticks(rotation=45, ha='right', fontsize=11)  # Rotação dos rótulos do eixo x
-plt.yticks(fontsize=11)
-plt.legend(title='Gênero', fontsize=11, title_fontsize=12, loc='upper right')  # Personalização da legenda
-
-# Ajuste dos layouts para não cortar os textos
-plt.tight_layout()
-plt.show()
-
-# Exibir a tabela de contagem
-print(genero_categoria)
-print("\n-----------------------------------------------------")
-
-
 
 print("\n-----------------------------------------------------")
 print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
