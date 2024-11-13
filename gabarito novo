@@ -115,6 +115,7 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
+print("\n-----------------------------------------------------")
 
 # Pergunta 4 - Top 10 Países com mais laureados em Física e Química
 print("\n-----------------------------------------------------")
