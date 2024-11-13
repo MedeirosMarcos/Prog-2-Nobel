@@ -101,18 +101,20 @@ plt.show()
 print("\n-----------------------------------------------------")
 
 
-# Pergunta 3 - Mudança nas áreas premiadas ao longo do tempo
+# Pergunta 3 - Relação entre idade e ano do prêmio
 print("\n-----------------------------------------------------")
-print("\n Pergunta 3: Mudança nas áreas de pesquisa ao longo do tempo\n")
-premios_por_decada_categoria = df.groupby(['Década', 'Categoria']).size().unstack().fillna(0)
-premios_por_decada_categoria.plot(kind='line', linewidth=2, marker='o', colormap='tab10')
-plt.title('Mudança nas Áreas de Pesquisa Premiadas ao Longo do Tempo')
-plt.xlabel('Década')
-plt.ylabel('Número de Prêmios')
-plt.legend(title='Categoria')
+print("\n Pergunta 3: Relação entre a idade dos laureados e o ano do prêmio\n")
+
+# Plotando o gráfico de dispersão
+plt.figure(figsize=(10, 6))
+plt.scatter(df['Ano'], df['Idade_na_homenagem'], alpha=0.6, color='teal', edgecolor='black')
+plt.title('Relação entre Ano do Prêmio e Idade dos Laureados')
+plt.xlabel('Ano')
+plt.ylabel('Idade na Homenagem')
+plt.grid(True)
+plt.tight_layout()
 plt.show()
-print(premios_por_decada_categoria)
-print("\n-----------------------------------------------------")
+
 
 # Pergunta 4 - Top 10 Países com mais laureados em Física e Química
 print("\n-----------------------------------------------------")
@@ -221,63 +223,98 @@ plt.show()
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 7 - Expectativa de vida média dos laureados por década de prêmio
+# Pergunta 7 - Faixas etárias dos laureados por categoria
 print("\n-----------------------------------------------------")
-print("\n Pergunta 7: Expectativa de vida média dos laureados por década de prêmio\n")
-def preencher_data_morte(row):
-    if pd.isnull(row['Morte']):
-        mesma_decada_nascimento = df[(df['Nascimento'].dt.year // 10) * 10 == (row['Nascimento'].year // 10) * 10]
-        idade_morte_media = (mesma_decada_nascimento['Morte'].dropna() - mesma_decada_nascimento['Nascimento']).dt.days.mean() / 365
-        if pd.notnull(idade_morte_media):
-            return row['Nascimento'] + pd.DateOffset(years=int(idade_morte_media))
-    return row['Morte']
+print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
 
-df['Morte'] = df.apply(preencher_data_morte, axis=1)
-df['Expectativa_de_vida'] = (df['Morte'] - df['Nascimento']).dt.days / 365
-expectativa_por_decada = df.groupby('Década')['Expectativa_de_vida'].mean()
-expectativa_por_decada.plot(kind='bar', color='lightgreen', edgecolor='black')
-plt.title('Expectativa de Vida dos Laureados por Década')
-plt.xlabel('Década')
-plt.ylabel('Expectativa de Vida (anos)')
-plt.show()
-print(expectativa_por_decada)
+# Pergunta 7 - Faixas etárias dos laureados por categoria
 print("\n-----------------------------------------------------")
+print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
+    
+# Criar categorias de faixa etária com pd.cut
+df['Faixa_Etaria'] = pd.cut(df['Idade_na_homenagem'], bins=3, labels=['Jovem', 'Adulto', 'Idoso'])
+    
+# Exibir a contagem de laureados em cada faixa etária para cada categoria
+faixa_etaria_por_categoria = pd.crosstab(df['Categoria'], df['Faixa_Etaria'])
+print("Distribuição por Categoria e Faixa Etária:")
+print(faixa_etaria_por_categoria)
+    
+# Gráfico de barras empilhadas para visualização
+faixa_etaria_por_categoria.plot(kind='bar', stacked=True, color=['lightblue', 'orange', 'gray'], edgecolor='black')
+plt.title('Distribuição de Faixas Etárias dos Laureados por Categoria')
+plt.xlabel('Categoria')
+plt.ylabel('Número de Laureados')
+plt.xticks(rotation=45, ha='right')
+plt.legend(title='Faixa Etária')
+plt.tight_layout()
+plt.show()
+    
+print("\n-----------------------------------------------------")
+
+# Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões
+print("\n-----------------------------------------------------")
+print("\n Pergunta 9: Qual a proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões?\n")
+
+# Lista de países europeus (pode ser ajustada conforme necessário)
+europa = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 
+          'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 
+          'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 
+          'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 
+          'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 
+          'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City']
+
+# Criar uma nova coluna para identificar se o laureado nasceu na Europa ou em outra região
+df['Região'] = 'Outras Regiões'  # Inicializa como "Outras Regiões"
+df.loc[df['País de nascimento'].isin(europa), 'Região'] = 'Europa'  # Atualiza para "Europa" onde o país está na lista
+
+# Contar o número de laureados nas duas categorias
+contagem_regiao = df['Região'].value_counts()
+
+# Calcular a proporção
+proporcao_europa = contagem_regiao['Europa'] / contagem_regiao.sum() * 100
+proporcao_outros = contagem_regiao['Outras Regiões'] / contagem_regiao.sum() * 100
+
+# Exibir as proporções
+print(f"Proporção de laureados nascidos na Europa: {proporcao_europa:.2f}%")
+print(f"Proporção de laureados nascidos em outras regiões: {proporcao_outros:.2f}%")
+
+# Gráfico de pizza para visualização
+plt.figure(figsize=(7, 7))
+plt.pie(contagem_regiao, labels=contagem_regiao.index, autopct='%1.1f%%', colors=['lightblue', 'salmon'], startangle=90, wedgeprops={'edgecolor': 'black'})
+plt.title('Proporção de Laureados Nascidos na Europa e em Outras Regiões')
+plt.show()
+
+print("\n-----------------------------------------------------")
+
 
 # Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
 print("\n-----------------------------------------------------")
 print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
+
+# Criação da tabela cruzada para contagem por Categoria e Gênero
 genero_categoria = pd.crosstab(df['Categoria'], df['Gênero'])
-genero_categoria.plot(kind='bar', stacked=True, color=['pink', 'dodgerblue', 'gray'])
-plt.title('Distribuição dos Prêmios Nobel por Gênero e Categoria')
-plt.xlabel('Categoria')
-plt.ylabel('Número de Laureados')
-plt.legend(title='Gênero')
-plt.show()
-print(genero_categoria)
-print("\n-----------------------------------------------------")
 
-# Pergunta 9 - Análise de Tendências nas Categorias de Prêmios ao Longo do Tempo
-print("\n-----------------------------------------------------")
-print("\n Pergunta 9: Tendência das Categorias de Prêmios ao Longo do Tempo\n")
+# Plotagem do gráfico aprimorado
+plt.figure(figsize=(10, 7))  # Ajuste do tamanho da figura
+ax = genero_categoria.plot(kind='bar', stacked=True, color=['#FFC0CB', '#1E90FF', '#A9A9A9'], edgecolor='black', width=0.75, linewidth=0.7)
 
-# Contagem do número de prêmios por década e categoria
-tendencia_categoria_decada = df.groupby(['Década', 'Categoria']).size().unstack().fillna(0)
+# Personalização do título e dos eixos
+plt.title('Distribuição dos Prêmios Nobel por Gênero e Categoria', fontsize=16, weight='bold')
+plt.xlabel('Categoria', fontsize=13)
+plt.ylabel('Número de Laureados', fontsize=13)
+plt.xticks(rotation=45, ha='right', fontsize=11)  # Rotação dos rótulos do eixo x
+plt.yticks(fontsize=11)
+plt.legend(title='Gênero', fontsize=11, title_fontsize=12, loc='upper right')  # Personalização da legenda
 
-# Aplicando uma média móvel para suavizar tendências
-tendencia_categoria_decada_suavizada = tendencia_categoria_decada.rolling(window=3, axis=0).mean()
-
-# Plotando as tendências
-tendencia_categoria_decada_suavizada.plot(kind='line', marker='o', colormap='tab20', linewidth=3)
-plt.title('Tendência nas Categorias de Prêmios Nobel ao Longo do Tempo (Média Móvel de 3 Décadas)')
-plt.xlabel('Década')
-plt.ylabel('Número de Prêmios')
-plt.legend(title='Categoria', bbox_to_anchor=(1.05, 1), loc='upper left')
+# Ajuste dos layouts para não cortar os textos
 plt.tight_layout()
 plt.show()
 
-# Exibindo os dados processados
-print(tendencia_categoria_decada_suavizada)
+# Exibir a tabela de contagem
+print(genero_categoria)
 print("\n-----------------------------------------------------")
+
+
 
 print("\n-----------------------------------------------------")
 print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
@@ -290,4 +327,3 @@ categorias_ultimas_decadas = ultimas_decadas.groupby('Categoria').size().sort_va
 print("\nPrincipais Categorias Premiadas nas Últimas Décadas:")
 print(categorias_ultimas_decadas)
 print("\n-----------------------------------------------------")
-
