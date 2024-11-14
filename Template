@@ -40,68 +40,70 @@ print(df.info())
 print("\nEstatísticas descritivas do DataFrame:")
 print(df.describe())
 
-# Pergunta 1 - Média de idade dos laureados por categoria
+# Pergunta 1 - Média de idade dos laureados por categoria.
+print("\n-----------------------------------------------------")
+print("\n Pergunta 1: Média de idade dos laureados por categoria\n")
+idade_por_categoria = df.groupby('Categoria')['Idade_na_homenagem'].mean()
+idade_por_categoria.plot(kind='bar', color='skyblue', edgecolor='black')
+plt.title('Média de Idade dos Laureados por Categoria')
+plt.xlabel('Categoria')
+plt.ylabel('Média de Idade')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+print(idade_por_categoria)
 print("\n-----------------------------------------------------")
 
-print("\n-----------------------------------------------------")
-
-# Pergunta 2 - Padrão de idade dos laureados por país
+# Pergunta 2 - Padrão de idade dos laureados por país.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 2: Quais são os 5 paises com a maior idade média na homenagem e os 5 paises com a menor?\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 3 - Relação entre idade e ano do prêmio
+# Pergunta 3 - Relação entre idade e ano do prêmio.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 3: Relação entre a idade dos laureados e o ano do prêmio\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 4 - Top 10 Países com mais laureados em Física e Química
+# Pergunta 4 - Top 10 Países com mais laureados em Física e Química.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 4: Top 10 Países com mais laureados em Física e Química\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 5 - Proporção de laureados homens e mulheres na história da premiação
+# Pergunta 5 - Proporção de laureados homens e mulheres na história da premiação.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 5: Proporção de laureados homens e mulheres na história da premiação\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 6 - Média de idade dos laureados dos países que mais/menos ganharam prêmios em Física e Química com menos de 45 anos
+# Pergunta 6 - Média de idade dos laureados dos países que mais/menos ganharam prêmios em Física e Química com menos de 45 anos.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 6: Idade dos laureados dos países com mais e menos prêmios em Física e Química (< 45 anos)\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 7 - Faixas etárias dos laureados por categoria
+# Pergunta 7 - Faixas etárias dos laureados por categoria?
 print("\n-----------------------------------------------------")
 print("\n Pergunta 7: Quais são as faixas etárias mais comuns entre os laureados do Prêmio Nobel e como elas variam de acordo com a categoria do prêmio?\n")
     
 print("\n-----------------------------------------------------")
 
-# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
+# Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria.
 print("\n-----------------------------------------------------")
 print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
 
 print("\n-----------------------------------------------------")
 
-# Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões
+# Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões?
 print("\n-----------------------------------------------------")
 print("\n Pergunta 9: Qual a proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões?\n")
 
-# Lista de países europeus (pode ser ajustada conforme necessário)
-europa = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 
-          'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 
-          'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 
-          'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 
-          'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 
-          'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City']
-
 print("\n-----------------------------------------------------")
-# Pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?
-print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
 
+# Pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?
+print("\n-----------------------------------------------------")
+print('pergunta 10 - Quais foram as principais categorias premiadas nas últimas décadas?')
 
 print("\n-----------------------------------------------------")
