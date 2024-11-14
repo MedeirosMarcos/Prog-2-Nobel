@@ -55,12 +55,13 @@ print("\n-----------------------------------------------------")
 print("\n-----------------------------------------------------")
 print("\n Pergunta 3: Relação entre a idade dos laureados e o ano do prêmio\n")
 
+print("\n-----------------------------------------------------")
+
 # Pergunta 4 - Top 10 Países com mais laureados em Física e Química
 print("\n-----------------------------------------------------")
 print("\n Pergunta 4: Top 10 Países com mais laureados em Física e Química\n")
 
 print("\n-----------------------------------------------------")
-
 
 # Pergunta 5 - Proporção de laureados homens e mulheres na história da premiação
 print("\n-----------------------------------------------------")
@@ -83,6 +84,8 @@ print("\n-----------------------------------------------------")
 # Pergunta 8 - Distribuição dos prêmios por Gênero e Categoria
 print("\n-----------------------------------------------------")
 print("\n Pergunta 8: Distribuição dos prêmios por Gênero e Categoria\n")
+
+print("\n-----------------------------------------------------")
 
 # Pergunta 9 - Proporção de Laureados Nascidos na Europa em Comparação com Outras Regiões
 print("\n-----------------------------------------------------")
